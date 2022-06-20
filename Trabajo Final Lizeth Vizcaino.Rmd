@@ -1,0 +1,223 @@
+---
+title: "Trabajo Final"
+author: "Lizeth Vizcaino"
+date: "19/6/2022"
+abstract: Este documento es el trabajo final del curso de R
+
+output:
+  html_document:
+    toc : yes
+---
+
+# Curso de Manejo de datos y reportería con R
+
+## Trabajo Final Lizeth Vizcaíno 
+
+***Sobre los datos***
+
+Descargue los archivos .xlsx denominados “Sgalaxy.xlsx” y “actividades.xlsx” que se encuentran en la carpeta
+compartida de GoogleDrive CursoR_ManejoDatos_Reporteria/Trabajo_Final.
+La data fue obtenida de la página web http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recogniton+Using+Smartphones que recoge datos sobre experimentos que se han llevado a cabo con un grupo
+de 30 voluntarios en un rango de edad de 19 a 48 años. Cada persona realizó seis actividades (WALKING,
+WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) usando un teléfono
+inteligente (Samsung Galaxy S II) en la cintura. Usando su acelerómetro y giroscopio incorporados capturaron
+la aceleración lineal de 3 ejes y la velocidad angular de 3 ejes a una velocidad constante de 50 Hz.
+
+
+***Actividades a realizar***
+
+1. Leer los archivos “Sgalaxy.xlsx” y “actividades.xlsx”.
+
+```{r cod1, eval=FALSE}
+
+library(readxl)
+Sgalaxy <- read_excel("00 CURSOS/03 SEE/03 R/New folder/Clase 1/Data/Sgalaxy.xlsx")
+View(Sgalaxy) 
+
+library(readxl)
+actividades <- read_excel("00 CURSOS/03 SEE/03 R/New folder/Clase 1/Data/actividades.xlsx")
+View(actividades)
+
+#en esta página no se muestra el resultado ya que las tablas son muy grandes, se envia por correo el script donde se muestra que corre los codigos colocados
+```
+
+2. Unir ambas tablas por la columna “code”. La nueva columna deberá llamarse “actividad”.
+
+```{r cod2, eval=FALSE}
+
+library(dplyr)
+class(Sgalaxy$code)
+
+class(actividades$code)
+
+Sgalaxy2 <- Sgalaxy %>% full_join(actividades, by = c("code"= "code")) 
+  View(Sgalaxy2)
+  
+  colnames(Sgalaxy2)
+  
+  #en esta página no se muestra el resultado ya que las tablas son muy grandes, se envia por correo el script donde se muestra que corre los codigos colocados
+```
+
+3. Actualice el data frame seleccionando únicamente las columnas que contienen mediciones de la media y
+la desviación estándar. Note que los nombres de las columnas que contienen datos de las mediciones
+de la media tienen la palabra “Media” y que los nombres de las columnas que contienen datos de las
+mediciones de la desviación estándar tienen la palabra “DesvSTD”.
+
+```{r cod3, eval=FALSE}
+
+ #selecciono las columnas que contengan Media y DesvSTD
+
+
+Sgalaxy3 = select(Sgalaxy2,subject, activity, contains("DesvSTD"),contains("Media"))   
+head(Sgalaxy3)
+View(Sgalaxy3)
+colnames(Sgalaxy3)
+
+#en esta página no se muestra el resultado ya que las tablas son muy grandes, se envia por correo el script donde se muestra que corre los codigos colocados
+
+```
+
+
+4. Reemplace parte de los nombres de las columnas con la función gsub() del paquete stringr que sirve
+para reemplazar caracteres:
+• Las columnas cuyos nombres contengan Acc reemplace por Acelerometro.
+
+• Las columnas cuyos nombres contengan Gyro reemplace por Giroscopio.
+
+• Las columnas cuyos nombres contengan BodyBody reemplace por Cuerpo.
+
+• Las columnas cuyos nombres contengan Body reemplace por Cuerpo.
+
+• Las columnas cuyos nombres contengan Mag reemplace por Magnitud.
+
+• Las columnas cuyos nombres contengan angle reemplace por Angulo.
+
+• Las columnas cuyos nombres contengan gravity reemplace por Gravedad.
+
+• Las columnas cuyos nombres contengan Gravity reemplace por Gravedad.
+
+```{r cod4, eval= FALSE }
+
+
+#Las columnas cuyos nombres contengan Acc reemplace por Acelerometro.
+colnames(Sgalaxy3) <- gsub("Acc","Acelerometro",colnames(Sgalaxy3))
+
+#Las columnas cuyos nombres contengan Gyro reemplace por Giroscopio.
+
+colnames(Sgalaxy3) <- gsub("Gyro","Giroscopio",colnames(Sgalaxy3))
+
+#Las columnas cuyos nombres contengan BodyBody reemplace por Cuerpo.
+
+colnames(Sgalaxy3) <- gsub("BodyBody","Cuerpo",colnames(Sgalaxy3))
+
+#Las columnas cuyos nombres contengan Body reemplace por Cuerpo
+colnames(Sgalaxy3) <- gsub("Body","Cuerpo",colnames(Sgalaxy3))
+
+#Las columnas cuyos nombres contengan Mag reemplace por Magnitud.
+colnames(Sgalaxy3) <- gsub("Mag","Magnitud",colnames(Sgalaxy3))
+
+#Las columnas cuyos nombres contengan angle reemplace por Angulo.
+
+colnames(Sgalaxy3) <- gsub("angle","Angulo",colnames(Sgalaxy3))
+
+#Las columnas cuyos nombres contengan gravity reemplace por Gravedad.
+#Las columnas cuyos nombres contengan Gravity reemplace por Gravedad.
+
+colnames(Sgalaxy3) <- gsub("gravity","Gravedad",colnames(Sgalaxy3))
+
+
+colnames(Sgalaxy3) <- gsub("Gravity","Gravedad",colnames(Sgalaxy3))
+
+colnames(Sgalaxy3)
+
+
+#en esta página no se muestra el resultado ya que las tablas son muy grandes, se envia por correo el script donde se muestra que corre los codigos colocados
+
+```
+
+5. El conjunto de datos obtenido en el punto 4, agrúpelo por “actividad” y “subject”, colapsando por
+promedios todas las demás columnas, para esto, utilice la función summarise_all().
+
+```{r cod5, eval=FALSE}
+
+
+Sgalaxy4 <- Sgalaxy3 %>%
+  group_by(activity)%>%
+  summarise_all(mean)
+View(Sgalaxy4)
+
+Sgalaxy5 <- Sgalaxy3 %>%
+  group_by(subject)%>%
+  summarise_all(mean)
+View(Sgalaxy5)
+
+#en esta página no se muestra el resultado ya que las tablas son muy grandes, se envia por correo el script donde se muestra que corre los codigos colocados
+
+```
+6. Con la data obtenida en el punto 5, genere un gráfico que contenga mínimo 6 capas según la gramática
+de los gráficos. Dele un formato diferente al que se genera por default con ggplot2.
+
+```{r cod6, eval=FALSE}
+
+ 
+library(ggplot2)
+#datalayer
+#1. capa de los datos
+ggplot(data=Sgalaxy4)
+
+#2.aesthetics: capa de las escalas, se especifica los ejes
+ggplot(data=Sgalaxy4,aes(x="activity", y = "TiempoCuerpoAcelerometro.DesvSTD...X" ))
+
+#3. geometria
+ggplot(data=Sgalaxy4,aes(x= activity, y = TiempoCuerpoAcelerometro.DesvSTD...X ))+
+         geom_jitter()
+
+#4. Facetslayer
+ggplot(data=Sgalaxy4,aes(x= activity, y = TiempoCuerpoAcelerometro.DesvSTD...X ))+
+         geom_jitter() +
+          facet_wrap(vars(TiempoGravedadAcelerometro.DesvSTD...Y))
+
+
+#5. Statistic layer
+ggplot(data=Sgalaxy4,aes(x= activity, y = TiempoCuerpoAcelerometro.DesvSTD...X ))+
+  geom_jitter() +
+  facet_wrap(vars(TiempoGravedadAcelerometro.DesvSTD...Y))+
+  stat_smooth(method = "lm",se = FALSE)
+
+#6. Coordinate layer
+
+ggplot(data=Sgalaxy4,aes(x= activity, y = TiempoCuerpoAcelerometro.DesvSTD...X ))+
+  geom_jitter() +
+  facet_wrap(vars(TiempoGravedadAcelerometro.DesvSTD...Y))+
+  stat_smooth(method = "lm",se = FALSE)
+
+
+  
+ggplot(data=Sgalaxy4,aes(x= activity, y = TiempoCuerpoAcelerometro.DesvSTD...X ))+
+  geom_jitter(alpha = 0.05) +
+  geom_boxplot(fill="steelblue") +
+coord_flip()+
+  labs(title= "Gráfico Cajas",
+       y = "TiempoCuerpoAcelerometro.DesvSTD...X ")
+
+```
+y el resultado es 
+
+
+
+![Gráfico](imagentrabajo.jpeg)
+7. Genere una tabla con datos relevantes que desee mostrar de la data de Samsung Galaxy S II.
+
+```{r cod7, eval=FALSE}
+
+Sgalaxy6 <- Sgalaxy3 %>%
+  group_by(activity)%>%
+  summarise(meanFrecCuerpoAcelerometro.Media...X= mean(FrecCuerpoAcelerometro.Media...X, na.rm = TRUE)) %>%
+View(Sgalaxy6)
+```
+
+![Gráfico](grafico2.jpg)
+
+
+
+
